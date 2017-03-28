@@ -113,14 +113,14 @@ class CsharpCompleter( Completer ):
     solutioncompleter = self._GetSolutionCompleter( request_data )
     completion_type = self.CompletionType( request_data )
     return [ responses.BuildCompletionData(
-                completion[ 'MethodHeader' ] or completion[ 'CompletionText' ],
+                completion['MethodHeader'] or completion[ 'CompletionText' ],
                 completion[ 'ReturnType' ] or completion[ 'DisplayText' ],
                 completion[ 'Description' ],
                 None,
                 None,
                 { "required_namespace_import" :
                    completion[ 'RequiredNamespaceImport' ],
-                  "Snippet" : completion[ 'Snippet' ]} )
+                  "Snippet" : completion.get( 'Snippet', None) } )
              for completion
              in solutioncompleter._GetCompletions( request_data,
                                                    completion_type ) ]
@@ -445,9 +445,9 @@ class CsharpSolutionCompleter( object ):
     parameters[ 'WantImportableTypes' ] = completion_type
     parameters[ 'ForceSemanticCompletion' ] = completion_type
     parameters[ 'WantDocumentationForEveryCompletionResult' ] = True
-    parameters[ 'WantSnippet' ] = True
-    parameters[ 'WantMethodHeader' ] = True
-    parameters[ 'WantReturnType' ] = True
+    parameters[ 'WantSnippet' ] = request_data["WantSnippet"]
+    parameters[ 'WantMethodHeader' ] = request_data["WantSnippet"]
+    parameters[ 'WantReturnType' ] = request_data["WantSnippet"]
 
     completions = self._GetResponse( '/autocomplete', parameters )
     return completions if completions is not None else []
